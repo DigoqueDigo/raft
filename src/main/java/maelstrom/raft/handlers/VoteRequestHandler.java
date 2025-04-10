@@ -8,12 +8,15 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 
 /*
+ * input type -> voteRequest
+ * output type -> voteResponse
+ *
+ * cId -> identificador do candidato
  * cTerm -> termo do candidato
  * cLogTerm -> termo da ultima entrada do candidato
- * CLogLength -> tamanho do log do candidato
- * cId -> identificador do candidato
+ * cLogLength -> tamanho do log do candidato
  *
- * currentTerm -> o meu termo
+ * vTerm -> termo do eleitor
  * voteGranted -> voto no candidato
  */
 
@@ -65,13 +68,15 @@ public final class VoteRequestHandler implements MessageHandler{
         if (termOK && logOk && votedForOk){
             state.setVotedFor(cId);
             node.reply(message, Json.object()
-                .add("currentTerm", currentTerm)
+                .add("type", "voteResponse")
+                .add("vTerm", currentTerm)
                 .add("voteGranted", true));
         }
 
         else{
             node.reply(message, Json.object()
-                .add("currentTerm", currentTerm)
+                .add("type", "voteResponse")
+                .add("vTerm", currentTerm)
                 .add("voteGranted", false));
         }
     }

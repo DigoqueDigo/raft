@@ -1,4 +1,9 @@
 package maelstrom.raft.state;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 
 public class State{
 
@@ -9,13 +14,21 @@ public class State{
     private int currentTerm;
     private String votedFor;
     private String currentRole;
+    private String currentLeader;
+    private Set<String> votesReceived;
+    private Map<String, Integer> sentLength;
+    private Map<String, Integer> ackedLength;
     private Log log; 
 
 
     public State(){
         this.currentTerm = 0;
         this.votedFor = null;
+        this.currentLeader = null;
         this.currentRole = "follower";
+        this.votesReceived = new HashSet<>();
+        this.sentLength = new HashMap<>();
+        this.ackedLength = new HashMap<>();
         this.log = new Log();
     }
 
@@ -30,18 +43,23 @@ public class State{
     }
 
 
-    public void setCurrentTerm(int currentTerm){
-        this.currentTerm = currentTerm;
-    }
-
-
-    public boolean isLeader(){
-        return this.currentRole.equals(LEADER_ROLE);
-    }
-
-
     public String getVotedFor(){
         return this.votedFor;
+    }
+
+
+    public String getCurrentRole(){
+        return this.currentRole;
+    }
+
+
+    public int getvotesReceived(){
+        return this.votesReceived.size();
+    }
+
+
+    public void setCurrentTerm(int currentTerm){
+        this.currentTerm = currentTerm;
     }
 
 
@@ -52,5 +70,35 @@ public class State{
 
     public void setVotedFor(String votedFor){
         this.votedFor = votedFor;
+    }
+
+
+    public void setCurrentLeader(String currentLeader){
+        this.currentLeader = currentLeader;
+    }
+
+
+    public boolean isLeader(){
+        return this.currentRole.equals(LEADER_ROLE);
+    }
+
+
+    public void clearVotes(){
+        this.votesReceived.clear();
+    }
+
+
+    public void addVote(String voterId){
+        this.votesReceived.add(voterId);
+    }
+
+
+    public void putSentLenghtOf(String follower, int length){
+        this.sentLength.put(follower, length);
+    }
+
+
+    public void putAckedLengthOf(String follower, int length){
+        this.ackedLength.put(follower, length);
     }
 }

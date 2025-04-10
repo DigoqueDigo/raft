@@ -1,0 +1,69 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Simple Test",
+            "type": "shell",
+            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 ",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Test with latency",
+            "type": "shell",
+            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --latency 500",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Test with nemesis partition",
+            "type": "shell",
+            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --nemesis partition",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Final Test",
+            "type": "shell",
+            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --latency 500 --nemesis partition",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+    ]
+}

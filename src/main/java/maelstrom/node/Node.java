@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TimeZone;
-import java.util.function.Consumer;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -22,7 +21,7 @@ public class Node{
     private long nextMessageId = 0;
     private String nodeId = "uninitialized";
     private List<String> nodeIds = new ArrayList<String>();
-    private final Map<String, Consumer<Message>> requestHandlers = new HashMap<String, Consumer<Message>>();
+    private final Map<String, MessageHandler> requestHandlers = new HashMap<String, MessageHandler>();
 
 
     // Get nodeid
@@ -38,7 +37,7 @@ public class Node{
 
 
     // Registers a request handler for the given type of message
-    public Node on(String type, Consumer<Message> handler){
+    public Node on(String type, MessageHandler handler){
         this.requestHandlers.put(type, handler);
         return this;
     }
@@ -106,11 +105,11 @@ public class Node{
     // Handles a parsed message from STDIN
     public void handleMessage(Message message) throws Error{
         final String type = message.body.getString("type", null);
-        Consumer<Message> handler = requestHandlers.get(type);    
+        MessageHandler handler = requestHandlers.get(type);    
         log("Handling " + message);
 
         if (handler != null){
-            handler.accept(message);
+            handler.handle(message);
         }
 
         else{

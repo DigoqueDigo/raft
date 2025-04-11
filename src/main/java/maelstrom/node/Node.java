@@ -14,6 +14,7 @@ import com.eclipsesource.json.JsonValue;
 import maelstrom.message.Error;
 import maelstrom.message.IJson;
 import maelstrom.message.Message;
+import maelstrom.message.MessageHandler;
 
 
 public class Node{

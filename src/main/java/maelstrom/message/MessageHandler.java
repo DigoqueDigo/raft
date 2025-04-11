@@ -1,5 +1,4 @@
-package maelstrom.node;
-import maelstrom.message.Message;
+package maelstrom.message;
 
 
 public interface MessageHandler{

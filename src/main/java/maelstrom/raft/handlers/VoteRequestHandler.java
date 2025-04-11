@@ -1,8 +1,7 @@
 package maelstrom.raft.handlers;
 import maelstrom.message.Message;
-import maelstrom.node.MessageHandler;
+import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
-import maelstrom.raft.state.LogEntry;
 import maelstrom.raft.state.State;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
@@ -33,6 +32,7 @@ public final class VoteRequestHandler implements MessageHandler{
     }
 
 
+    @Override
     public void handle(Message message){
 
         JsonObject body = message.body;
@@ -53,11 +53,9 @@ public final class VoteRequestHandler implements MessageHandler{
 
         int lastTerm = 0;
         int logLength = state.getLog().size();
-        LogEntry lastLogEntry = state.getLog().getLastLogEntry();
 
-        // verificar se tenho algum log
-        if (lastLogEntry != null){
-            lastTerm = lastLogEntry.getTerm();
+        if (logLength > 0){
+            lastTerm = state.getLog().getLastLogEntry().getTerm();
         }
 
         // verificar se o log do candidato esta tao atualizado quanto o meu

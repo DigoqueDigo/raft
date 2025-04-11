@@ -12,20 +12,24 @@ public class State{
     public static final String LEADER_ROLE = "leader";
 
     private int currentTerm;
+    private int commitLength;
+
     private String votedFor;
     private String currentRole;
     private String currentLeader;
     private Set<String> votesReceived;
+
+    private Log log;
     private Map<String, Integer> sentLength;
     private Map<String, Integer> ackedLength;
-    private Log log; 
 
 
     public State(){
         this.currentTerm = 0;
+        this.commitLength = 0;
         this.votedFor = null;
         this.currentLeader = null;
-        this.currentRole = "follower";
+        this.currentRole = FOLLOWER_ROLE;
         this.votesReceived = new HashSet<>();
         this.sentLength = new HashMap<>();
         this.ackedLength = new HashMap<>();
@@ -40,6 +44,11 @@ public class State{
 
     public int getCurrentTerm(){
         return this.currentTerm;
+    }
+
+
+    public int getCommitLength(){
+        return this.commitLength;
     }
 
 
@@ -95,6 +104,11 @@ public class State{
 
     public void putSentLenghtOf(String follower, int length){
         this.sentLength.put(follower, length);
+    }
+
+
+    public int getSentLengthOf(String follower){
+        return this.sentLength.get(follower);
     }
 
 

@@ -1,8 +1,9 @@
 package maelstrom.raft.handlers;
 import maelstrom.message.Message;
-import maelstrom.node.MessageHandler;
+import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.raft.state.State;
+import maelstrom.raft.utils.ReplicateLog;
 
 /*
  * input type -> voteResponse
@@ -24,8 +25,9 @@ public class VoteResponseHandler implements MessageHandler{
     }
 
 
+    @Override
     public void handle(Message message){
-        
+
         String voterId = message.src;
         int vTerm = message.body.getInt("vTerm", -1);
         boolean voteGranted = message.body.getBoolean("voteGranted", false);
@@ -37,7 +39,8 @@ public class VoteResponseHandler implements MessageHandler{
             state.setCurrentTerm(vTerm);
             state.setCurrentRole(State.FOLLOWER_ROLE);
             state.setVotedFor(null);
-            // TODO :: CANCELAR O ELECTION TIMER
+
+            // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE)
         }
 
         else if (roleOK && termOK && voteGranted){
@@ -47,18 +50,18 @@ public class VoteResponseHandler implements MessageHandler{
             int votesReceived = state.getvotesReceived();
             int logSize = state.getLog().size();
 
-            // TODO :: CANCELAR O ELECTION TIMER
-
             if (votesReceived >= Math.ceil((totalNodes + 1 / 2.0))){
 
                 state.setCurrentRole(State.LEADER_ROLE);
                 state.setCurrentLeader(node.getNodeId());
+                
+                // TODO :: CANCELAR LEADER ELECTION (ACHO QUE NAO E PRECISO) (AFINAL E)
 
                 for (String follower : node.getNodeIds()){
                     if (!follower.equals(node.getNodeId())){
                         state.putSentLenghtOf(follower, logSize);
                         state.putAckedLengthOf(follower, 0);
-                        // TODO :: ENVIAR MENSAGEM A DIZER QUE SOU O LIDER
+                        ReplicateLog.replicate(node, follower, state);
                     }
                 }
             }

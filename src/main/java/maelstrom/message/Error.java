@@ -68,9 +68,9 @@ public class Error extends RuntimeException implements IJson{
     @Override
     public JsonValue toJson(){
         return Json.object()
-        .add("type", "error")
-        .add("code", code)
-        .add("text", text);
+            .add("type", "error")
+            .add("code", code)
+            .add("text", text);
     }
 
 

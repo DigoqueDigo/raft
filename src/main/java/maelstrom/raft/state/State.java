@@ -22,6 +22,7 @@ public class State{
     private Log log;
     private Map<String, Integer> sentLength;
     private Map<String, Integer> ackedLength;
+    private Map<Integer, Integer> store;
 
 
     public State(){
@@ -33,6 +34,7 @@ public class State{
         this.votesReceived = new HashSet<>();
         this.sentLength = new HashMap<>();
         this.ackedLength = new HashMap<>();
+        this.store = new HashMap<>();
         this.log = new Log();
     }
 
@@ -69,6 +71,11 @@ public class State{
 
     public void setCurrentTerm(int currentTerm){
         this.currentTerm = currentTerm;
+    }
+
+
+    public void setCommitLength(int commitLength){
+        this.commitLength = commitLength;
     }
 
 
@@ -114,5 +121,15 @@ public class State{
 
     public void putAckedLengthOf(String follower, int length){
         this.ackedLength.put(follower, length);
+    }
+
+
+    public Integer storeRead(int key){
+        return this.store.get(key);
+    }
+
+
+    public void storeWrite(int key, int value){
+        this.store.put(key, value);
     }
 }

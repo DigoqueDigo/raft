@@ -23,7 +23,7 @@ import maelstrom.raft.utils.ReplicateLog;
  */
 
 
-public class BroadcastHandler implements MessageHandler{
+public final class BroadcastHandler implements MessageHandler{
 
     private Node node;
     private State state;

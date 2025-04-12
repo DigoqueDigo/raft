@@ -14,7 +14,7 @@ import maelstrom.raft.utils.ReplicateLog;
  */
 
 
-public class VoteResponseHandler implements MessageHandler{
+public final class VoteResponseHandler implements MessageHandler{
 
     private Node node;
     private State state;

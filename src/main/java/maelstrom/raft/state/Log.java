@@ -29,6 +29,11 @@ public class Log implements IJson{
     }
 
 
+    public void truncate(int fromIndex, int toIndex){
+        this.log = this.log.subList(fromIndex, toIndex);
+    }
+
+
     public void addLogEntry(LogEntry logEntry){
         this.log.add(logEntry);
     }

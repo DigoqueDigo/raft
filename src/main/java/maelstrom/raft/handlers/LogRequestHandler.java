@@ -1,11 +1,11 @@
 package maelstrom.raft.handlers;
 import com.eclipsesource.json.Json;
-
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
+import maelstrom.raft.utils.AppendEntries;
 
 /*
  * INPUT 
@@ -26,7 +26,7 @@ import maelstrom.raft.state.State;
  */
 
 
-public class LogRequestHandler implements MessageHandler{
+public final class LogRequestHandler implements MessageHandler{
 
     private Node node;
     private State state;
@@ -68,9 +68,11 @@ public class LogRequestHandler implements MessageHandler{
 
         if (termOK && logOK){
 
+            final int lCommitLength = message.body.getInt("lCommitLength", -1); 
             final Log lSuffix = new Log(message.body.get("lSuffix").asArray());
-            // TODO :: APPENDENTRIES 
-            int ack = lPrefixLength + lSuffix.size();
+
+            AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
+            final int ack = lPrefixLength + lSuffix.size();
 
             node.reply(message, Json.object()
                 .add("type", "logResponse")

@@ -6,10 +6,11 @@ import maelstrom.raft.state.State;
 import maelstrom.raft.utils.ReplicateLog;
 
 /*
- * input type -> voteResponse
- *
+ * INPUT
+ * type -> voteResponse
+ * vId -> identificador do eleitor
  * vTerm -> termo do eleitor
- * voteGranted -> voto no candidato
+ * vVoteGranted -> voto no candidato
  */
 
 
@@ -28,9 +29,9 @@ public class VoteResponseHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        String voterId = message.src;
-        int vTerm = message.body.getInt("vTerm", -1);
-        boolean voteGranted = message.body.getBoolean("voteGranted", false);
+        final int vTerm = message.body.getInt("vTerm", -1);
+        final String voterId = message.body.getString("vId", null);
+        final boolean voteGranted = message.body.getBoolean("vVoteGranted", false);
 
         boolean termOK = vTerm == state.getCurrentTerm();
         boolean roleOK = state.getCurrentRole().equals(State.CANDIDATE_ROLE);
@@ -40,7 +41,7 @@ public class VoteResponseHandler implements MessageHandler{
             state.setCurrentRole(State.FOLLOWER_ROLE);
             state.setVotedFor(null);
 
-            // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE)
+            // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE) (ACHO QUE NAO E PRECISO)
         }
 
         else if (roleOK && termOK && voteGranted){
@@ -54,8 +55,8 @@ public class VoteResponseHandler implements MessageHandler{
 
                 state.setCurrentRole(State.LEADER_ROLE);
                 state.setCurrentLeader(node.getNodeId());
-                
-                // TODO :: CANCELAR LEADER ELECTION (ACHO QUE NAO E PRECISO) (AFINAL E)
+
+                // TODO :: CANCELAR LEADER ELECTION (ACHO QUE NAO E PRECISO)
 
                 for (String follower : node.getNodeIds()){
                     if (!follower.equals(node.getNodeId())){

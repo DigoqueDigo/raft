@@ -4,19 +4,20 @@ import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.raft.state.State;
 import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
 
 /*
- * input type -> voteRequest
- * output type -> voteResponse
- *
+ * INPUT
+ * type -> voteRequest
  * cId -> identificador do candidato
  * cTerm -> termo do candidato
  * cLogTerm -> termo da ultima entrada do candidato
  * cLogLength -> tamanho do log do candidato
  *
+ * OUTPUT
+ * type -> voteResponse
+ * vId -> identificador do eleitor
  * vTerm -> termo do eleitor
- * voteGranted -> voto no candidato
+ * vVoteGranted -> voto no candidato
  */
 
 
@@ -35,11 +36,10 @@ public final class VoteRequestHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        JsonObject body = message.body;
-        int cTerm = body.getInt("cTerm", -1);
-        int cLogTerm = body.getInt("cLogTerm", -1);
-        int cLogLength = body.getInt("cLogLength", -1);
-        String cId = body.getString("cId", null);
+        final int cTerm = message.body.getInt("cTerm", -1);
+        final int cLogTerm = message.body.getInt("cLogTerm", -1);
+        final int cLogLength = message.body.getInt("cLogLength", -1);
+        final String cId = message.body.getString("cId", null);
 
         // o candidato tem um termo superior, atualizar o meu termo e role
         if (cTerm > state.getCurrentTerm()){
@@ -55,7 +55,7 @@ public final class VoteRequestHandler implements MessageHandler{
         int logLength = state.getLog().size();
 
         if (logLength > 0){
-            lastTerm = state.getLog().getLastLogEntry().getTerm();
+            lastTerm = state.getLog().get(logLength - 1).getTerm();
         }
 
         // verificar se o log do candidato esta tao atualizado quanto o meu
@@ -67,15 +67,17 @@ public final class VoteRequestHandler implements MessageHandler{
             state.setVotedFor(cId);
             node.reply(message, Json.object()
                 .add("type", "voteResponse")
+                .add("vId", node.getNodeId())
                 .add("vTerm", currentTerm)
-                .add("voteGranted", true));
+                .add("vVoteGranted", true));
         }
 
         else{
             node.reply(message, Json.object()
                 .add("type", "voteResponse")
+                .add("vId", node.getNodeId())
                 .add("vTerm", currentTerm)
-                .add("voteGranted", false));
+                .add("vVoteGranted", false));
         }
     }
 }

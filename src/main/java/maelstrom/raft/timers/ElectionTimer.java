@@ -58,7 +58,7 @@ public class ElectionTimer implements NodeTimer{
                 int logLength = state.getLog().size();
 
                 if (logLength > 0){
-                    lastTerm = state.getLog().getLastLogEntry().getTerm();
+                    lastTerm = state.getLog().get(logLength - 1).getTerm();
                 }
 
                 for (String follower : node.getNodeIds()){

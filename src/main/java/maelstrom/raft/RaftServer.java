@@ -2,11 +2,13 @@ package maelstrom.raft;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.node.NodeTimer;
+import maelstrom.raft.handlers.BroadcastHandler;
+import maelstrom.raft.handlers.LogRequestHandler;
 import maelstrom.raft.handlers.VoteRequestHandler;
 import maelstrom.raft.handlers.VoteResponseHandler;
-import maelstrom.raft.state.State;
 import maelstrom.raft.timers.ElectionTimer;
 import maelstrom.raft.timers.HeartBeatTimer;
+import maelstrom.raft.state.State;
 
 
 public class RaftServer{
@@ -21,9 +23,15 @@ public class RaftServer{
 
         MessageHandler voteRequestHandler = new VoteRequestHandler(node, state);
         MessageHandler voteReponseHandler = new VoteResponseHandler(node, state);
+        MessageHandler broadcastHandler = new BroadcastHandler(node, state);
+        MessageHandler logRequestHandler = new LogRequestHandler(node, state);
 
         node.on("voteRequest", voteRequestHandler);
         node.on("voteResponse", voteReponseHandler);
+        node.on("read", broadcastHandler);
+        node.on("write", broadcastHandler);
+        node.on("cas", broadcastHandler);
+        node.on("logRequest", logRequestHandler);
 
         electionTimer.start();
         heartBeatTimer.start();

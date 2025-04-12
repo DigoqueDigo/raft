@@ -16,15 +16,16 @@ public class Log implements IJson{
     }
 
 
-    public int size(){
-        return this.log.size();
+    public Log(JsonArray logEntries){
+        this.log = new ArrayList<>();
+        for (JsonValue logEntry : logEntries){
+            this.log.add(new LogEntry(logEntry));
+        }
     }
 
 
-    // TODO :: REMOVER ISTO E UTILIZAR O GET
-    public LogEntry getLastLogEntry(){
-        int size = this.log.size();
-        return size > 0 ? this.log.get(size - 1) : null;
+    public int size(){
+        return this.log.size();
     }
 
 

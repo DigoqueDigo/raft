@@ -5,14 +5,14 @@ import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
 
 /*
- * output type -> logRequest
- * 
+ * OUTPUT 
+ * type -> logRequest
  * lId -> identificador do lider
- * lTerm -> termo atual do liedr
- * prefixLength -> comprimento do log do seguidor (espectavel)
- * prefixTerm -> term da ultima entrada do log do seguidor (expectavel)
- * commitLenght -> indice ate onde os logs foram committed
- * suffix -> entradas do log enviadas ao seguidor
+ * lTerm -> termo atual do lider
+ * lPrefixLength -> comprimento do log do seguidor (espectavel)
+ * lPrefixTerm -> term da ultima entrada do log do seguidor (expectavel)
+ * lCommitLength -> indice ate onde os logs foram committed
+ * lSuffix -> entradas do log enviadas ao seguidor
  */
 
 
@@ -32,9 +32,9 @@ public final class ReplicateLog{
             .add("type", "logRequest")
             .add("lId", leader.getNodeId())
             .add("lTerm", state.getCurrentTerm())
-            .add("prefixLength", prefixLength)
-            .add("prefixTerm", prefixTerm)
-            .add("commitLength", state.getCommitLength())
-            .add("suffix", suffix.toJson()));
+            .add("lPrefixLength", prefixLength)
+            .add("lPrefixTerm", prefixTerm)
+            .add("lCommitLength", state.getCommitLength())
+            .add("lSuffix", suffix.toJson()));
     }
 }

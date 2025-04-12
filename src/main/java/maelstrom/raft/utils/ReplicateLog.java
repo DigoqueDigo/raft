@@ -4,17 +4,6 @@ import maelstrom.node.Node;
 import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
 
-/*
- * OUTPUT 
- * type -> logRequest
- * lId -> identificador do lider
- * lTerm -> termo atual do lider
- * lPrefixLength -> comprimento do log do seguidor (espectavel)
- * lPrefixTerm -> term da ultima entrada do log do seguidor (expectavel)
- * lCommitLength -> indice ate onde os logs foram committed
- * lSuffix -> entradas do log enviadas ao seguidor
- */
-
 
 public final class ReplicateLog{
 

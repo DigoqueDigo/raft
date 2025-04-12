@@ -5,14 +5,6 @@ import maelstrom.node.Node;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.ReplicateLog;
 
-/*
- * INPUT
- * type -> voteResponse
- * vId -> identificador do eleitor
- * vTerm -> termo do eleitor
- * vVoteGranted -> voto no candidato
- */
-
 
 public final class VoteResponseHandler implements MessageHandler{
 

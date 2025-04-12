@@ -5,21 +5,6 @@ import maelstrom.node.Node;
 import maelstrom.raft.state.State;
 import com.eclipsesource.json.Json;
 
-/*
- * INPUT
- * type -> voteRequest
- * cId -> identificador do candidato
- * cTerm -> termo do candidato
- * cLogTerm -> termo da ultima entrada do candidato
- * cLogLength -> tamanho do log do candidato
- *
- * OUTPUT
- * type -> voteResponse
- * vId -> identificador do eleitor
- * vTerm -> termo do eleitor
- * vVoteGranted -> voto no candidato
- */
-
 
 public final class VoteRequestHandler implements MessageHandler{
 

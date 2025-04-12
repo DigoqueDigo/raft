@@ -6,15 +6,6 @@ import maelstrom.raft.state.State;
 import maelstrom.raft.utils.CommitLength;
 import maelstrom.raft.utils.ReplicateLog;
 
-/*
- * INPUT
- * type -> logResponse
- * fId -> identificador do seguidor
- * fTerm -> termo do seguidor
- * fAck -> comprimento do log aceite pelo seguidor
- * fSuccess -> se o seguidor aceitou o logResquest 
-*/
-
 
 public class LogResponseHandler implements MessageHandler{
 

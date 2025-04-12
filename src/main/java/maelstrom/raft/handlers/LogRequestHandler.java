@@ -7,24 +7,6 @@ import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.AppendEntries;
 
-/*
- * INPUT 
- * type -> logRequest
- * lId -> identificador do lider
- * lTerm -> termo atual do lider
- * lPrefixLength -> comprimento do log do seguidor (espectavel)
- * lPrefixTerm -> term da ultima entrada do log do seguidor (expectavel)
- * lCommitLength -> indice ate onde os logs foram committed
- * lSuffix -> entradas do log enviadas ao seguidor
- *
- * OUTPUT
- * type -> logResponse
- * fId -> identificador do seguidor
- * fTerm -> termo do seguidor
- * fAck -> comprimento do log aceite pelo seguidor
- * fSuccess -> se o seguidor aceitou o logResquest 
- */
-
 
 public final class LogRequestHandler implements MessageHandler{
 

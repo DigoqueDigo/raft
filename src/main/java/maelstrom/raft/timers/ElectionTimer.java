@@ -9,15 +9,6 @@ import maelstrom.node.NodeTimer;
 import maelstrom.raft.state.State;
 import com.eclipsesource.json.Json;
 
-/*
- * output type -> voteRequest
- *
- * cId -> identificador do candidato
- * cTerm -> termo do candidato
- * cLogTerm -> termo da ultima entrada do candidato
- * cLogLength -> tamanho do log do candidato
- */
-
 
 public class ElectionTimer implements NodeTimer{
 

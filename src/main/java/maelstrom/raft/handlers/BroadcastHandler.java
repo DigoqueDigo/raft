@@ -8,20 +8,6 @@ import maelstrom.raft.state.LogEntry;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.ReplicateLog;
 
-/*
- * INPUT 
- * type -> read/write/cas
- * 
- * OUTPUT
- * type -> logRequest
- * lId -> identificador do lider
- * lTerm -> termo atual do liedr
- * lPrefixLength -> comprimento do log do seguidor (espectavel)
- * lPrefixTerm -> term da ultima entrada do log do seguidor (expectavel)
- * lCommitLength -> indice ate onde os logs foram committed
- * lSuffix -> entradas do log enviadas ao seguidor
- */
-
 
 public final class BroadcastHandler implements MessageHandler{
 

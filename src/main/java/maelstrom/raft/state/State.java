@@ -64,6 +64,11 @@ public class State{
     }
 
 
+    public String getCurrentLeader(){
+        return this.currentLeader;
+    }
+
+
     public int getvotesReceived(){
         return this.votesReceived.size();
     }
@@ -121,6 +126,11 @@ public class State{
 
     public void putAckedLengthOf(String follower, int length){
         this.ackedLength.put(follower, length);
+    }
+
+
+    public int getAckedLengthOf(String follower){
+        return this.ackedLength.get(follower);
     }
 
 

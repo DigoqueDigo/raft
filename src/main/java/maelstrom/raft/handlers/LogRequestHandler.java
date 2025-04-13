@@ -40,6 +40,7 @@ public final class LogRequestHandler implements MessageHandler{
             if (lTerm > state.getCurrentTerm()){
                 state.setCurrentTerm(lTerm);
                 state.setVotedFor(null);
+                electionTimer.cancel();
             }
 
             if (lTerm == state.getCurrentTerm()){

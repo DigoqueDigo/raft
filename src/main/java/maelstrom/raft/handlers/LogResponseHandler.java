@@ -15,6 +15,7 @@ public class LogResponseHandler implements MessageHandler{
     private State state;
     private NodeTimer electionTimer;
 
+
     public LogResponseHandler(Node node, State state, NodeTimer electionTimer){
         this.node = node;
         this.state = state;
@@ -39,7 +40,6 @@ public class LogResponseHandler implements MessageHandler{
                 state.setCurrentRole(State.FOLLOWER_ROLE);
                 state.setVotedFor(null);
                 electionTimer.cancel();
-                // TODO :: CANCELAR O ELECTION TIMER (FEITO)
             }
 
             else if (fTerm == state.getCurrentTerm() && state.isLeader()){

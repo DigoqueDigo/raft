@@ -41,7 +41,6 @@ public final class VoteResponseHandler implements MessageHandler{
                 state.setCurrentRole(State.FOLLOWER_ROLE);
                 state.setVotedFor(null);
                 electionTimer.cancel();
-                // TODO :: CANCELAR O ELECTION TIMER (FEITO)
             }
 
             else if (roleOK && termOK && vVoteGranted){
@@ -56,8 +55,6 @@ public final class VoteResponseHandler implements MessageHandler{
                     state.setCurrentRole(State.LEADER_ROLE);
                     state.setCurrentLeader(node.getNodeId());
                     electionTimer.cancel();
-
-                    // TODO :: CANCELAR LEADER ELECTION (FEITO)
 
                     for (String follower : node.getNodeIds()){
                         if (!follower.equals(node.getNodeId())){

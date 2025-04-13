@@ -41,9 +41,12 @@ public final class BroadcastHandler implements MessageHandler{
                 }
             }
 
+            else if (state.getCurrentLeader() != null){
+                node.forward(state.getCurrentLeader(), message);
+            }
+
             else{
-                // TODO :: E SUPOSTO ENCAMINHAR A MENSAGEM PARA O LIDER
-                IJson error = Error.temporarilyUnavailable("I am not the leader");
+                IJson error = Error.temporarilyUnavailable("I am not the leader and dont know who is");
                 node.reply(message, error);
             }
         }

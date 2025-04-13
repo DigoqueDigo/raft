@@ -98,6 +98,12 @@ public class Node{
     }
 
 
+    // forward a particular message
+    public void forward(String dest, Message message){
+        send(new Message(message.src, dest, message.body));
+    }
+
+
     // Handle an init message, setting up our state
     private void handleInit(Message message){
         this.nodeId = message.body.getString("node_id", null);

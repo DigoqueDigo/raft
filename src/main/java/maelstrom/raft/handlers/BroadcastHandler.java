@@ -24,25 +24,28 @@ public final class BroadcastHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        if (state.isLeader()){
+        synchronized (state){
 
-            int currentTerm = state.getCurrentTerm();
-            LogEntry logEntry = new LogEntry(message, currentTerm);
+            if (state.isLeader()){
 
-            state.getLog().addLogEntry(logEntry);
-            state.putAckedLengthOf(node.getNodeId(), state.getLog().size());
+                int currentTerm = state.getCurrentTerm();
+                LogEntry logEntry = new LogEntry(message, currentTerm);
 
-            for (String follower : node.getNodeIds()){
-                if (!follower.equals(node.getNodeId())){
-                    ReplicateLog.replicate(node, follower, state);
+                state.getLog().addLogEntry(logEntry);
+                state.putAckedLengthOf(node.getNodeId(), state.getLog().size());
+
+                for (String follower : node.getNodeIds()){
+                    if (!follower.equals(node.getNodeId())){
+                        ReplicateLog.replicate(node, follower, state);
+                    }
                 }
             }
-        }
 
-        else{
-            // TODO :: E SUPOSTO ENCAMINHAR A MENSAGEM PARA O LIDER
-            IJson error = Error.temporarilyUnavailable("I am not the leader");
-            node.reply(message, error);
+            else{
+                // TODO :: E SUPOSTO ENCAMINHAR A MENSAGEM PARA O LIDER
+                IJson error = Error.temporarilyUnavailable("I am not the leader");
+                node.reply(message, error);
+            }
         }
     }
 }

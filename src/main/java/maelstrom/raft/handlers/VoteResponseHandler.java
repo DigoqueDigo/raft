@@ -22,42 +22,45 @@ public final class VoteResponseHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        VoteResponse voteResponse = new VoteResponse(message.body);
+        synchronized (state){
 
-        final String vId = voteResponse.vId();
-        final int vTerm = voteResponse.vTerm();
-        final boolean vVoteGranted = voteResponse.vVoteGranted();
+            VoteResponse voteResponse = new VoteResponse(message.body);
 
-        boolean termOK = vTerm == state.getCurrentTerm();
-        boolean roleOK = state.getCurrentRole().equals(State.CANDIDATE_ROLE);
+            final String vId = voteResponse.vId();
+            final int vTerm = voteResponse.vTerm();
+            final boolean vVoteGranted = voteResponse.vVoteGranted();
 
-        if (vTerm > state.getCurrentTerm()){
-            state.setCurrentTerm(vTerm);
-            state.setCurrentRole(State.FOLLOWER_ROLE);
-            state.setVotedFor(null);
+            boolean termOK = vTerm == state.getCurrentTerm();
+            boolean roleOK = state.getCurrentRole().equals(State.CANDIDATE_ROLE);
 
-            // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE) (ACHO QUE NAO E PRECISO)
-        }
+            if (vTerm > state.getCurrentTerm()){
+                state.setCurrentTerm(vTerm);
+                state.setCurrentRole(State.FOLLOWER_ROLE);
+                state.setVotedFor(null);
 
-        else if (roleOK && termOK && vVoteGranted){
+                // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE) (ACHO QUE NAO E PRECISO)
+            }
 
-            state.addVote(vId);
-            int totalNodes = node.getNodeIds().size();
-            int votesReceived = state.getvotesReceived();
-            int logSize = state.getLog().size();
+            else if (roleOK && termOK && vVoteGranted){
 
-            if (votesReceived >= Math.ceil((totalNodes + 1 / 2.0))){
+                state.addVote(vId);
+                int totalNodes = node.getNodeIds().size();
+                int votesReceived = state.getvotesReceived();
+                int logSize = state.getLog().size();
 
-                state.setCurrentRole(State.LEADER_ROLE);
-                state.setCurrentLeader(node.getNodeId());
+                if (votesReceived >= Math.ceil((totalNodes + 1 / 2.0))){
 
-                // TODO :: CANCELAR LEADER ELECTION (ACHO QUE NAO E PRECISO)
+                    state.setCurrentRole(State.LEADER_ROLE);
+                    state.setCurrentLeader(node.getNodeId());
 
-                for (String follower : node.getNodeIds()){
-                    if (!follower.equals(node.getNodeId())){
-                        state.putSentLenghtOf(follower, logSize);
-                        state.putAckedLengthOf(follower, 0);
-                        ReplicateLog.replicate(node, follower, state);
+                    // TODO :: CANCELAR LEADER ELECTION (ACHO QUE NAO E PRECISO)
+
+                    for (String follower : node.getNodeIds()){
+                        if (!follower.equals(node.getNodeId())){
+                            state.putSentLenghtOf(follower, logSize);
+                            state.putAckedLengthOf(follower, 0);
+                            ReplicateLog.replicate(node, follower, state);
+                        }
                     }
                 }
             }

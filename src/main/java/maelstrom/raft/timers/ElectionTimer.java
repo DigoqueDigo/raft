@@ -12,8 +12,8 @@ import maelstrom.raft.state.State;
 
 public class ElectionTimer implements NodeTimer{
 
-    public static final Long LOWER_ELECTION_TIMEOUT_LIMIT = 200L;
-    public static final Long UPPER_ELECTION_TIMEOUT_LIMIT = 400L;
+    public static final Long LOWER_ELECTION_TIMEOUT_LIMIT = 300L;
+    public static final Long UPPER_ELECTION_TIMEOUT_LIMIT = 500L;
 
     private Node node;
     private State state;
@@ -36,30 +36,33 @@ public class ElectionTimer implements NodeTimer{
 
         this.electionTask = executor.schedule(() -> {
 
-            if (!state.isLeader()){
+            synchronized (state){
 
-                state.setCurrentRole(State.CANDIDATE_ROLE);
-                state.setCurrentTerm(state.getCurrentTerm() + 1);
+                if (!state.isLeader()){
 
-                state.clearVotes();
-                state.addVote(node.getNodeId());
-                state.setVotedFor(node.getNodeId());
+                    state.setCurrentRole(State.CANDIDATE_ROLE);
+                    state.setCurrentTerm(state.getCurrentTerm() + 1);
 
-                int lastTerm = 0;
-                int logLength = state.getLog().size();
+                    state.clearVotes();
+                    state.addVote(node.getNodeId());
+                    state.setVotedFor(node.getNodeId());
 
-                if (logLength > 0){
-                    lastTerm = state.getLog().get(logLength - 1).getTerm();
-                }
+                    int lastTerm = 0;
+                    int logLength = state.getLog().size();
 
-                for (String follower : node.getNodeIds()){
-                    if (!follower.equals(node.getNodeId())){
-                        node.send(follower, new VoteRequest(
-                            node.getNodeId(),
-                            state.getCurrentTerm(),
-                            logLength,
-                            lastTerm
-                        ));
+                    if (logLength > 0){
+                        lastTerm = state.getLog().get(logLength - 1).getTerm();
+                    }
+
+                    for (String follower : node.getNodeIds()){
+                        if (!follower.equals(node.getNodeId())){
+                            node.send(follower, new VoteRequest(
+                                node.getNodeId(),
+                                state.getCurrentTerm(),
+                                logLength,
+                                lastTerm
+                            ));
+                        }
                     }
                 }
             }
@@ -70,15 +73,14 @@ public class ElectionTimer implements NodeTimer{
     }
 
 
-
-    public void cancel(){
+    public synchronized void cancel(){
         if (this.electionTask != null && !this.electionTask.isCancelled()) {
             this.electionTask.cancel(true);
         }
     }
 
 
-    public void reset(){
+    public synchronized void reset(){
         cancel();
         start();
     }

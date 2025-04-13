@@ -22,50 +22,53 @@ public final class VoteRequestHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        VoteRequest voteRequest = new VoteRequest(message.body);
+        synchronized (state){
 
-        final String cId = voteRequest.cId();
-        final int cTerm = voteRequest.cTerm();
-        final int cLastTerm = voteRequest.cLastTerm();
-        final int cLogLength = voteRequest.cLogLength();
+            VoteRequest voteRequest = new VoteRequest(message.body);
 
-        // o candidato tem um termo superior, atualizar o meu termo e role
-        if (cTerm > state.getCurrentTerm()){
-            state.setCurrentTerm(cTerm);
-            state.setVotedFor(null);
-            state.setCurrentRole(State.FOLLOWER_ROLE);
-        }
+            final String cId = voteRequest.cId();
+            final int cTerm = voteRequest.cTerm();
+            final int cLastTerm = voteRequest.cLastTerm();
+            final int cLogLength = voteRequest.cLogLength();
 
-        String votedFor = state.getVotedFor();
-        int currentTerm = state.getCurrentTerm();
+            // o candidato tem um termo superior, atualizar o meu termo e role
+            if (cTerm > state.getCurrentTerm()){
+                state.setCurrentTerm(cTerm);
+                state.setVotedFor(null);
+                state.setCurrentRole(State.FOLLOWER_ROLE);
+            }
 
-        int lastTerm = 0;
-        int logLength = state.getLog().size();
+            String votedFor = state.getVotedFor();
+            int currentTerm = state.getCurrentTerm();
 
-        if (logLength > 0){
-            lastTerm = state.getLog().get(logLength - 1).getTerm();
-        }
+            int lastTerm = 0;
+            int logLength = state.getLog().size();
 
-        // verificar se o log do candidato esta tao atualizado quanto o meu
-        boolean termOK = cTerm == currentTerm;
-        boolean votedForOk = votedFor == null || votedFor.equals(cId);
-        boolean logOk = (cLastTerm > lastTerm) || (cLastTerm == lastTerm && cLogLength >= logLength);
+            if (logLength > 0){
+                lastTerm = state.getLog().get(logLength - 1).getTerm();
+            }
 
-        if (termOK && logOk && votedForOk){
-            state.setVotedFor(cId);
-            node.reply(message, new VoteResponse(
-                node.getNodeId(),
-                currentTerm,
-                true
-            ));
-        }
+            // verificar se o log do candidato esta tao atualizado quanto o meu
+            boolean termOK = cTerm == currentTerm;
+            boolean votedForOk = votedFor == null || votedFor.equals(cId);
+            boolean logOk = (cLastTerm > lastTerm) || (cLastTerm == lastTerm && cLogLength >= logLength);
 
-        else{
-            node.reply(message, new VoteResponse(
-                node.getNodeId(),
-                currentTerm,
-                false
-            ));
+            if (termOK && logOk && votedForOk){
+                state.setVotedFor(cId);
+                node.reply(message, new VoteResponse(
+                    node.getNodeId(),
+                    currentTerm,
+                    true
+                ));
+            }
+
+            else{
+                node.reply(message, new VoteResponse(
+                    node.getNodeId(),
+                    currentTerm,
+                    false
+                ));
+            }
         }
     }
 }

@@ -24,56 +24,59 @@ public final class LogRequestHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        LogRequest logRequest = new LogRequest(message.body);
+        synchronized (state){
 
-        final String lId = logRequest.lId();
-        final int lTerm = logRequest.lTerm();
-        final int lPrefixTerm = logRequest.lPrefixTerm();
-        final int lPrefixLength = logRequest.lPrefixLength();
+            LogRequest logRequest = new LogRequest(message.body);
 
-        if (lTerm > state.getCurrentTerm()){
-            state.setCurrentTerm(lTerm);
-            state.setVotedFor(null);
-        }
+            final String lId = logRequest.lId();
+            final int lTerm = logRequest.lTerm();
+            final int lPrefixTerm = logRequest.lPrefixTerm();
+            final int lPrefixLength = logRequest.lPrefixLength();
 
-        if (lTerm == state.getCurrentTerm()){
-            state.setCurrentRole(State.FOLLOWER_ROLE);
-            state.setCurrentLeader(lId);
-        }
+            if (lTerm > state.getCurrentTerm()){
+                state.setCurrentTerm(lTerm);
+                state.setVotedFor(null);
+            }
 
-        int prefixTerm = -1;
-        int logLength = state.getLog().size();
+            if (lTerm == state.getCurrentTerm()){
+                state.setCurrentRole(State.FOLLOWER_ROLE);
+                state.setCurrentLeader(lId);
+            }
 
-        if (lPrefixLength - 1 < logLength){
-            prefixTerm = state.getLog().get(lPrefixLength - 1).getTerm();
-        }
+            int prefixTerm = -1;
+            int logLength = state.getLog().size();
 
-        boolean termOK = lTerm == state.getCurrentTerm();
-        boolean logOK = (logLength >= lPrefixLength) && (lPrefixLength == 0 || prefixTerm == lPrefixTerm);
+            if (lPrefixLength - 1 < logLength){
+                prefixTerm = state.getLog().get(lPrefixLength - 1).getTerm();
+            }
 
-        if (termOK && logOK){
+            boolean termOK = lTerm == state.getCurrentTerm();
+            boolean logOK = (logLength >= lPrefixLength) && (lPrefixLength == 0 || prefixTerm == lPrefixTerm);
 
-            final int lCommitLength = logRequest.lCommitLength(); 
-            final Log lSuffix = new Log(logRequest.lSuffix().asArray());
+            if (termOK && logOK){
 
-            AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
-            final int ack = lPrefixLength + lSuffix.size();
+                final int lCommitLength = logRequest.lCommitLength(); 
+                final Log lSuffix = new Log(logRequest.lSuffix().asArray());
 
-            node.reply(message, new LogReponse(
-                node.getNodeId(),
-                state.getCurrentTerm(),
-                ack,
-                true
-            ));
-        }
+                AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
+                final int ack = lPrefixLength + lSuffix.size();
 
-        else{
-            node.reply(message, new LogReponse(
-                node.getNodeId(),
-                state.getCurrentTerm(),
-                0,
-                false
-            ));
+                node.reply(message, new LogReponse(
+                    node.getNodeId(),
+                    state.getCurrentTerm(),
+                    ack,
+                    true
+                ));
+            }
+
+            else{
+                node.reply(message, new LogReponse(
+                    node.getNodeId(),
+                    state.getCurrentTerm(),
+                    0,
+                    false
+                ));
+            }
         }
     }
 }

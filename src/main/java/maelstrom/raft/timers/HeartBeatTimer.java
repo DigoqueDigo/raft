@@ -11,7 +11,7 @@ import maelstrom.raft.utils.ReplicateLog;
 public class HeartBeatTimer implements NodeTimer{
 
     public static final Long HEART_BEAT_DELAY = 0L;
-    public static final Long HEART_BEAT_PERIOD = 100L;
+    public static final Long HEART_BEAT_PERIOD = 200L;
     
     private Node node;
     private State state;
@@ -27,10 +27,12 @@ public class HeartBeatTimer implements NodeTimer{
     @Override
     public void start(){
         executor.scheduleAtFixedRate(() -> {
-            if (state.isLeader()){
-                for (String follower : node.getNodeIds()){
-                    if (!follower.equals(node.getNodeId())){
-                        ReplicateLog.replicate(node, follower, state);
+            synchronized (state){
+                if (state.isLeader()){
+                    for (String follower : node.getNodeIds()){
+                        if (!follower.equals(node.getNodeId())){
+                            ReplicateLog.replicate(node, follower, state);
+                        }
                     }
                 }
             }

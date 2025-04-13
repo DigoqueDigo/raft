@@ -6,8 +6,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import maelstrom.node.Node;
 import maelstrom.node.NodeTimer;
+import maelstrom.raft.protocols.VoteRequest;
 import maelstrom.raft.state.State;
-import com.eclipsesource.json.Json;
 
 
 public class ElectionTimer implements NodeTimer{
@@ -54,12 +54,12 @@ public class ElectionTimer implements NodeTimer{
 
                 for (String follower : node.getNodeIds()){
                     if (!follower.equals(node.getNodeId())){
-                        node.send(follower, Json.object()
-                            .add("type", "voteRequest")
-                            .add("cId", node.getNodeId())
-                            .add("cTerm", state.getCurrentTerm())
-                            .add("cLogTerm", lastTerm)
-                            .add("cLogLength", logLength));
+                        node.send(follower, new VoteRequest(
+                            node.getNodeId(),
+                            state.getCurrentTerm(),
+                            logLength,
+                            lastTerm
+                        ));
                     }
                 }
             }

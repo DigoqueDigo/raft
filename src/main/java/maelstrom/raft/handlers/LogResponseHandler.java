@@ -2,6 +2,7 @@ package maelstrom.raft.handlers;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.raft.protocols.LogReponse;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.CommitLength;
 import maelstrom.raft.utils.ReplicateLog;
@@ -22,10 +23,12 @@ public class LogResponseHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        final int fAck = message.body.getInt("fAck", -1);
-        final int fTerm = message.body.getInt("fTerm", -1);
-        final String fId = message.body.getString("fId", null);
-        final boolean fSuccess = message.body.getBoolean("fSuccess", false);
+        LogReponse logResponse = new LogReponse(message.body);
+
+        final int fAck = logResponse.fAck();
+        final int fTerm = logResponse.fTerm();
+        final String fId = logResponse.fId();
+        final boolean fSuccess = logResponse.fSuccess();
 
         if (fTerm > state.getCurrentTerm()){
             state.setCurrentTerm(fTerm);

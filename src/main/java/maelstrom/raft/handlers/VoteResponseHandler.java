@@ -2,6 +2,7 @@ package maelstrom.raft.handlers;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.raft.protocols.VoteResponse;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.ReplicateLog;
 
@@ -21,9 +22,11 @@ public final class VoteResponseHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        final int vTerm = message.body.getInt("vTerm", -1);
-        final String voterId = message.body.getString("vId", null);
-        final boolean voteGranted = message.body.getBoolean("vVoteGranted", false);
+        VoteResponse voteResponse = new VoteResponse(message.body);
+
+        final String vId = voteResponse.vId();
+        final int vTerm = voteResponse.vTerm();
+        final boolean vVoteGranted = voteResponse.vVoteGranted();
 
         boolean termOK = vTerm == state.getCurrentTerm();
         boolean roleOK = state.getCurrentRole().equals(State.CANDIDATE_ROLE);
@@ -36,9 +39,9 @@ public final class VoteResponseHandler implements MessageHandler{
             // TODO :: CANCELAR O ELECTION TIMER (NAO PERCEBO POERQUE) (ACHO QUE NAO E PRECISO)
         }
 
-        else if (roleOK && termOK && voteGranted){
+        else if (roleOK && termOK && vVoteGranted){
 
-            state.addVote(voterId);
+            state.addVote(vId);
             int totalNodes = node.getNodeIds().size();
             int votesReceived = state.getvotesReceived();
             int logSize = state.getLog().size();

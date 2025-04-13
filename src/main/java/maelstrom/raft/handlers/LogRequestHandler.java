@@ -1,8 +1,9 @@
 package maelstrom.raft.handlers;
-import com.eclipsesource.json.Json;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.raft.protocols.LogReponse;
+import maelstrom.raft.protocols.LogRequest;
 import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.AppendEntries;
@@ -23,10 +24,12 @@ public final class LogRequestHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        final int lTerm = message.body.getInt("lTerm", -1);
-        final int lPrefixTerm = message.body.getInt("lPrefixTerm", -1);
-        final int lPrefixLength = message.body.getInt("lPrefixLength", -1);
-        final String lId = message.body.getString("lId", null);
+        LogRequest logRequest = new LogRequest(message.body);
+
+        final String lId = logRequest.lId();
+        final int lTerm = logRequest.lTerm();
+        final int lPrefixTerm = logRequest.lPrefixTerm();
+        final int lPrefixLength = logRequest.lPrefixLength();
 
         if (lTerm > state.getCurrentTerm()){
             state.setCurrentTerm(lTerm);
@@ -50,27 +53,27 @@ public final class LogRequestHandler implements MessageHandler{
 
         if (termOK && logOK){
 
-            final int lCommitLength = message.body.getInt("lCommitLength", -1); 
-            final Log lSuffix = new Log(message.body.get("lSuffix").asArray());
+            final int lCommitLength = logRequest.lCommitLength(); 
+            final Log lSuffix = new Log(logRequest.lSuffix().asArray());
 
             AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
             final int ack = lPrefixLength + lSuffix.size();
 
-            node.reply(message, Json.object()
-                .add("type", "logResponse")
-                .add("fId", node.getNodeId())
-                .add("fTerm", state.getCurrentTerm())
-                .add("fAck", ack)
-                .add("fSuccess", true));
+            node.reply(message, new LogReponse(
+                node.getNodeId(),
+                state.getCurrentTerm(),
+                ack,
+                true
+            ));
         }
 
         else{
-            node.reply(message, Json.object()
-                .add("type", "logResponse")
-                .add("fId", node.getNodeId())
-                .add("fTerm", state.getCurrentTerm())
-                .add("fAck", 0)
-                .add("fSuccess", false));
+            node.reply(message, new LogReponse(
+                node.getNodeId(),
+                state.getCurrentTerm(),
+                0,
+                false
+            ));
         }
     }
 }

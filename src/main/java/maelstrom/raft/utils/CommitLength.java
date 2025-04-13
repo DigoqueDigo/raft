@@ -1,4 +1,6 @@
 package maelstrom.raft.utils;
+import com.eclipsesource.json.JsonObject;
+import maelstrom.message.Message;
 import maelstrom.node.Node;
 import maelstrom.raft.state.State;
 
@@ -20,8 +22,10 @@ public final class CommitLength{
 
             if (acks >= Math.ceil((totalNodes + 1) / 2.0)){
                 int commitLength = state.getCommitLength();
-                Deliver.deliver(state, state.getLog().get(commitLength).getMessage());
+                Message message = state.getLog().get(commitLength).getMessage();
+                JsonObject response = Deliver.deliver(state, message);
                 state.setCommitLength(commitLength + 1);
+                node.reply(message, response);
             }
 
             else{

@@ -79,6 +79,11 @@ public class Node{
     }
 
 
+    public void send(String dest, IJson body){
+        send(dest, body.toJson().asObject());
+    }
+
+
     // Reply to a specific request message with a JsonObject body
     public void reply(Message request, JsonObject body){
         final Long msg_id = request.body.getLong("msg_id", -1);

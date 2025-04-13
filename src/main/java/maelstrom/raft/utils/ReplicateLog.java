@@ -1,6 +1,6 @@
 package maelstrom.raft.utils;
-import com.eclipsesource.json.Json;
 import maelstrom.node.Node;
+import maelstrom.raft.protocols.LogRequest;
 import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
 
@@ -17,13 +17,13 @@ public final class ReplicateLog{
             prefixTerm = state.getLog().get(prefixLength - 1).getTerm();
         }
 
-        leader.send(follower, Json.object()
-            .add("type", "logRequest")
-            .add("lId", leader.getNodeId())
-            .add("lTerm", state.getCurrentTerm())
-            .add("lPrefixLength", prefixLength)
-            .add("lPrefixTerm", prefixTerm)
-            .add("lCommitLength", state.getCommitLength())
-            .add("lSuffix", suffix.toJson()));
+        leader.send(follower, new LogRequest(
+            leader.getNodeId(),
+            state.getCurrentTerm(),
+            prefixLength,
+            prefixTerm,
+            state.getCommitLength(),
+            suffix.toJson()
+        ));
     }
 }

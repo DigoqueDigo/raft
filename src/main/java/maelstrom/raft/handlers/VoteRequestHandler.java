@@ -2,8 +2,9 @@ package maelstrom.raft.handlers;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.raft.protocols.VoteRequest;
+import maelstrom.raft.protocols.VoteResponse;
 import maelstrom.raft.state.State;
-import com.eclipsesource.json.Json;
 
 
 public final class VoteRequestHandler implements MessageHandler{
@@ -21,10 +22,12 @@ public final class VoteRequestHandler implements MessageHandler{
     @Override
     public void handle(Message message){
 
-        final int cTerm = message.body.getInt("cTerm", -1);
-        final int cLogTerm = message.body.getInt("cLogTerm", -1);
-        final int cLogLength = message.body.getInt("cLogLength", -1);
-        final String cId = message.body.getString("cId", null);
+        VoteRequest voteRequest = new VoteRequest(message.body);
+
+        final String cId = voteRequest.cId();
+        final int cTerm = voteRequest.cTerm();
+        final int cLastTerm = voteRequest.cLastTerm();
+        final int cLogLength = voteRequest.cLogLength();
 
         // o candidato tem um termo superior, atualizar o meu termo e role
         if (cTerm > state.getCurrentTerm()){
@@ -46,23 +49,23 @@ public final class VoteRequestHandler implements MessageHandler{
         // verificar se o log do candidato esta tao atualizado quanto o meu
         boolean termOK = cTerm == currentTerm;
         boolean votedForOk = votedFor == null || votedFor.equals(cId);
-        boolean logOk = (cLogTerm > lastTerm) || (cLogTerm == lastTerm && cLogLength >= logLength);
+        boolean logOk = (cLastTerm > lastTerm) || (cLastTerm == lastTerm && cLogLength >= logLength);
 
         if (termOK && logOk && votedForOk){
             state.setVotedFor(cId);
-            node.reply(message, Json.object()
-                .add("type", "voteResponse")
-                .add("vId", node.getNodeId())
-                .add("vTerm", currentTerm)
-                .add("vVoteGranted", true));
+            node.reply(message, new VoteResponse(
+                node.getNodeId(),
+                currentTerm,
+                true
+            ));
         }
 
         else{
-            node.reply(message, Json.object()
-                .add("type", "voteResponse")
-                .add("vId", node.getNodeId())
-                .add("vTerm", currentTerm)
-                .add("vVoteGranted", false));
+            node.reply(message, new VoteResponse(
+                node.getNodeId(),
+                currentTerm,
+                false
+            ));
         }
     }
 }

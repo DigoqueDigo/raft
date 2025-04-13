@@ -4,7 +4,7 @@
         {
             "label": "Simple Test",
             "type": "shell",
-            "command": "./build && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n",
+            "command": "./build.sh && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n",
             "args": [],
             "problemMatcher": [
                 "$tsc"
@@ -20,7 +20,7 @@
         {
             "label": "Test with latency",
             "type": "shell",
-            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --latency 500",
+            "command": "./build.sh && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n--latency 500",
             "args": [],
             "problemMatcher": [
                 "$tsc"
@@ -36,7 +36,7 @@
         {
             "label": "Test with nemesis partition",
             "type": "shell",
-            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --nemesis partition",
+            "command": "./build.sh && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n --nemesis partition",
             "args": [],
             "problemMatcher": [
                 "$tsc"
@@ -52,7 +52,7 @@
         {
             "label": "Final Test",
             "type": "shell",
-            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 --latency 500 --nemesis partition",
+            "command": "./build.sh && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n --latency 500 --nemesis partition",
             "args": [],
             "problemMatcher": [
                 "$tsc"

@@ -40,7 +40,7 @@ public class Log implements IJson{
 
 
     public LogEntry get(int index){
-        return (index >= 0 && index < this.log.size()) ? this.log.get(index) : null;
+        return this.log.get(index);
     }
 
 

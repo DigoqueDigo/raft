@@ -22,17 +22,17 @@ public class RaftServer{
         NodeTimer electionTimer = new ElectionTimer(node, state);
         NodeTimer heartBeatTimer = new HeartBeatTimer(node, state);
 
-        MessageHandler voteRequestHandler = new VoteRequestHandler(node, state);
-        MessageHandler voteReponseHandler = new VoteResponseHandler(node, state);
         MessageHandler broadcastHandler = new BroadcastHandler(node, state);
-        MessageHandler logRequestHandler = new LogRequestHandler(node, state);
-        MessageHandler logResponseHandler = new LogResponseHandler(node, state);
+        MessageHandler voteRequestHandler = new VoteRequestHandler(node, state);
+        MessageHandler voteReponseHandler = new VoteResponseHandler(node, state, electionTimer);
+        MessageHandler logResponseHandler = new LogResponseHandler(node, state, electionTimer);
+        MessageHandler logRequestHandler = new LogRequestHandler(node, state, electionTimer);
 
-        node.on("voteRequest", voteRequestHandler);
-        node.on("voteResponse", voteReponseHandler);
+        node.on("cas", broadcastHandler);
         node.on("read", broadcastHandler);
         node.on("write", broadcastHandler);
-        node.on("cas", broadcastHandler);
+        node.on("voteRequest", voteRequestHandler);
+        node.on("voteResponse", voteReponseHandler);
         node.on("logRequest", logRequestHandler);
         node.on("logResponse", logResponseHandler);
 

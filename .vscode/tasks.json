@@ -4,7 +4,7 @@
         {
             "label": "Simple Test",
             "type": "shell",
-            "command": "./build && ./maelstrom test --bin demo/java/server -w lin-kv --time-limit 5 --node-count 1 ",
+            "command": "./build && ./maelstrom.sh test --bin serve.sh -w lin-kv --time-limit 5 --node-count 3 --concurrency 2n",
             "args": [],
             "problemMatcher": [
                 "$tsc"

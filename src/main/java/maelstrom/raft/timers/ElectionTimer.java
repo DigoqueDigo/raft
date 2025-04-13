@@ -12,8 +12,8 @@ import maelstrom.raft.state.State;
 
 public class ElectionTimer implements NodeTimer{
 
-    public static final Long LOWER_ELECTION_TIMEOUT_LIMIT = 300L;
-    public static final Long UPPER_ELECTION_TIMEOUT_LIMIT = 500L;
+    public static final Long LOWER_ELECTION_TIMEOUT_LIMIT = 150L;
+    public static final Long UPPER_ELECTION_TIMEOUT_LIMIT = 300L;
 
     private Node node;
     private State state;

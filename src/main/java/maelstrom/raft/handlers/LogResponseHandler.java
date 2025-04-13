@@ -2,6 +2,7 @@ package maelstrom.raft.handlers;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.node.NodeTimer;
 import maelstrom.raft.protocols.LogReponse;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.CommitLength;
@@ -12,11 +13,12 @@ public class LogResponseHandler implements MessageHandler{
 
     private Node node;
     private State state;
+    private NodeTimer electionTimer;
 
-
-    public LogResponseHandler(Node node, State state){
+    public LogResponseHandler(Node node, State state, NodeTimer electionTimer){
         this.node = node;
         this.state = state;
+        this.electionTimer = electionTimer;
     }
 
 
@@ -36,7 +38,8 @@ public class LogResponseHandler implements MessageHandler{
                 state.setCurrentTerm(fTerm);
                 state.setCurrentRole(State.FOLLOWER_ROLE);
                 state.setVotedFor(null);
-                // TODO :: CANCELAR O ELECTION TIMER (ACHO QUE NAO E PRECISO)
+                electionTimer.cancel();
+                // TODO :: CANCELAR O ELECTION TIMER (FEITO)
             }
 
             else if (fTerm == state.getCurrentTerm() && state.isLeader()){

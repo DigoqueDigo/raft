@@ -2,6 +2,7 @@ package maelstrom.raft.handlers;
 import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
+import maelstrom.node.NodeTimer;
 import maelstrom.raft.protocols.LogReponse;
 import maelstrom.raft.protocols.LogRequest;
 import maelstrom.raft.state.Log;
@@ -13,11 +14,13 @@ public final class LogRequestHandler implements MessageHandler{
 
     private Node node;
     private State state;
+    private NodeTimer electionTimer;
 
 
-    public LogRequestHandler(Node node, State state){
+    public LogRequestHandler(Node node, State state, NodeTimer electionTimer){
         this.node = node;
         this.state = state;
+        this.electionTimer = electionTimer;
     }
 
 
@@ -26,6 +29,7 @@ public final class LogRequestHandler implements MessageHandler{
 
         synchronized (state){
 
+            electionTimer.reset();
             LogRequest logRequest = new LogRequest(message.body);
 
             final String lId = logRequest.lId();
@@ -46,7 +50,7 @@ public final class LogRequestHandler implements MessageHandler{
             int prefixTerm = -1;
             int logLength = state.getLog().size();
 
-            if (lPrefixLength - 1 < logLength){
+            if (lPrefixLength > 0 && lPrefixLength - 1 < logLength){
                 prefixTerm = state.getLog().get(lPrefixLength - 1).getTerm();
             }
 

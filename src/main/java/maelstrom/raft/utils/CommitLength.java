@@ -32,5 +32,5 @@ public final class CommitLength{
                 break;
             }
         }
-    }    
+    }
 }

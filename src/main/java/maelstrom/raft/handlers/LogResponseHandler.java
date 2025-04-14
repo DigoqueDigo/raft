@@ -3,7 +3,7 @@ import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.node.NodeTimer;
-import maelstrom.raft.protocols.LogReponse;
+import maelstrom.raft.protocols.LogResponse;
 import maelstrom.raft.state.State;
 import maelstrom.raft.utils.CommitLength;
 import maelstrom.raft.utils.ReplicateLog;
@@ -28,7 +28,7 @@ public class LogResponseHandler implements MessageHandler{
 
         synchronized (state){
 
-            LogReponse logResponse = new LogReponse(message.body);
+            LogResponse logResponse = new LogResponse(message.body);
 
             final int fAck = logResponse.fAck();
             final int fTerm = logResponse.fTerm();

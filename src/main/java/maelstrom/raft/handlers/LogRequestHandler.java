@@ -3,7 +3,7 @@ import maelstrom.message.Message;
 import maelstrom.message.MessageHandler;
 import maelstrom.node.Node;
 import maelstrom.node.NodeTimer;
-import maelstrom.raft.protocols.LogReponse;
+import maelstrom.raft.protocols.LogResponse;
 import maelstrom.raft.protocols.LogRequest;
 import maelstrom.raft.state.Log;
 import maelstrom.raft.state.State;
@@ -60,13 +60,13 @@ public final class LogRequestHandler implements MessageHandler{
 
             if (termOK && logOK){
 
-                final int lCommitLength = logRequest.lCommitLength(); 
+                final int lCommitLength = logRequest.lCommitLength();
                 final Log lSuffix = new Log(logRequest.lSuffix().asArray());
 
                 AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
                 final int ack = lPrefixLength + lSuffix.size();
 
-                node.reply(message, new LogReponse(
+                node.reply(message, new LogResponse(
                     node.getNodeId(),
                     state.getCurrentTerm(),
                     ack,
@@ -75,7 +75,7 @@ public final class LogRequestHandler implements MessageHandler{
             }
 
             else{
-                node.reply(message, new LogReponse(
+                node.reply(message, new LogResponse(
                     node.getNodeId(),
                     state.getCurrentTerm(),
                     0,

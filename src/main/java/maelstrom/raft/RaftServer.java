@@ -17,7 +17,7 @@ public class RaftServer{
     public void run(){
 
         Node node = new Node();
-        State state = new State(); 
+        State state = new State();
 
         NodeTimer electionTimer = new ElectionTimer(node, state);
         NodeTimer heartBeatTimer = new HeartBeatTimer(node, state);

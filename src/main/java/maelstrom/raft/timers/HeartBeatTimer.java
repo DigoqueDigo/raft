@@ -12,7 +12,7 @@ public class HeartBeatTimer implements NodeTimer{
 
     public static final Long HEART_BEAT_DELAY = 0L;
     public static final Long HEART_BEAT_PERIOD = 50L;
-    
+
     private Node node;
     private State state;
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

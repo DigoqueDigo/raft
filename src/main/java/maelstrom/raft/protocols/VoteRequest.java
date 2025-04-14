@@ -18,7 +18,7 @@ public record VoteRequest(String cId, int cTerm, int cLogLength, int cLastTerm) 
 
     @Override
     public JsonValue toJson(){
-        return Json.object()    
+        return Json.object()
             .add("type", "voteRequest")
             .add("cId", cId)
             .add("cTerm", cTerm)

@@ -20,7 +20,7 @@ public record LogRequest(String lId, int lTerm, int lPrefixLength, int lPrefixTe
 
     @Override
     public JsonValue toJson(){
-        return Json.object()    
+        return Json.object()
             .add("type", "logRequest")
             .add("lId", lId)
             .add("lTerm", lTerm)

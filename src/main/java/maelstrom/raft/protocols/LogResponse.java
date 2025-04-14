@@ -5,9 +5,9 @@ import com.eclipsesource.json.JsonValue;
 import maelstrom.message.IJson;
 
 
-public record LogReponse(String fId, int fTerm, int fAck, boolean fSuccess) implements IJson{
+public record LogResponse(String fId, int fTerm, int fAck, boolean fSuccess) implements IJson{
 
-    public LogReponse(JsonObject body){
+    public LogResponse(JsonObject body){
         this(
             body.getString("fId", null),
             body.getInt("fTerm", -1),
@@ -18,7 +18,7 @@ public record LogReponse(String fId, int fTerm, int fAck, boolean fSuccess) impl
 
     @Override
     public JsonValue toJson(){
-        return Json.object()    
+        return Json.object()
             .add("type", "logResponse")
             .add("fId", fId)
             .add("fTerm", fTerm)

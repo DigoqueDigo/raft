@@ -113,11 +113,11 @@ public class Node{
         reply(message, Json.object().add("type", "init_ok"));
     }
 
-    
+
     // Handles a parsed message from STDIN
     public void handleMessage(Message message) throws Error{
         final String type = message.body.getString("type", null);
-        MessageHandler handler = requestHandlers.get(type);    
+        MessageHandler handler = requestHandlers.get(type);
         log("Handling " + message);
 
         if (handler != null){

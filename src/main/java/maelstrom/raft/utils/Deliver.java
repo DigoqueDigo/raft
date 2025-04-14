@@ -35,7 +35,7 @@ public final class Deliver{
 
     public static JsonObject handleRead(Message message, State state){
 
-        JsonObject bodyReply = null; 
+        JsonObject bodyReply = null;
         Integer key = message.body.getInt("key", 0);
         Integer value = state.storeRead(key);
 

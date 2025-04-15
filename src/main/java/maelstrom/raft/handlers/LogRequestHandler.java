@@ -62,9 +62,9 @@ public final class LogRequestHandler implements MessageHandler{
 
                 final int lCommitLength = logRequest.lCommitLength();
                 final Log lSuffix = new Log(logRequest.lSuffix().asArray());
+                final int ack = lPrefixLength + lSuffix.size();
 
                 AppendEntries.append(lPrefixLength, lCommitLength, lSuffix, state);
-                final int ack = lPrefixLength + lSuffix.size();
 
                 node.reply(message, new LogResponse(
                     node.getNodeId(),

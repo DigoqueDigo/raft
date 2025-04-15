@@ -5,7 +5,7 @@ import maelstrom.node.Node;
 import maelstrom.node.NodeTimer;
 import maelstrom.raft.protocols.LogResponse;
 import maelstrom.raft.state.State;
-import maelstrom.raft.utils.CommitLength;
+import maelstrom.raft.utils.CommitEntries;
 import maelstrom.raft.utils.ReplicateLog;
 
 
@@ -47,7 +47,7 @@ public class LogResponseHandler implements MessageHandler{
                 if (fSuccess && fAck >= state.getAckedLengthOf(fId)){
                     state.putSentLenghtOf(fId, fAck);
                     state.putAckedLengthOf(fId, fAck);
-                    CommitLength.commit(node, state);
+                    CommitEntries.commit(node, state);
                 }
 
                 else if (state.getSentLengthOf(fId) > 0){

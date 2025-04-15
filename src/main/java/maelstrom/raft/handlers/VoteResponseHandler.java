@@ -48,7 +48,7 @@ public final class VoteResponseHandler implements MessageHandler{
                 state.addVote(vId);
                 int totalNodes = node.getNodeIds().size();
                 int votesReceived = state.getvotesReceived();
-                int logSize = state.getLog().size();
+                int logLength = state.getLog().size();
 
                 if (votesReceived >= Math.ceil((totalNodes + 1) / 2.0)){
 
@@ -58,7 +58,7 @@ public final class VoteResponseHandler implements MessageHandler{
 
                     for (String follower : node.getNodeIds()){
                         if (!follower.equals(node.getNodeId())){
-                            state.putSentLenghtOf(follower, logSize);
+                            state.putSentLenghtOf(follower, logLength);
                             state.putAckedLengthOf(follower, 0);
                             ReplicateLog.replicate(node, follower, state);
                         }

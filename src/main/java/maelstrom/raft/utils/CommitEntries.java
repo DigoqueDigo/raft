@@ -5,7 +5,7 @@ import maelstrom.node.Node;
 import maelstrom.raft.state.State;
 
 
-public final class CommitLength{
+public final class CommitEntries{
 
     public static void commit(Node node, State state){
 

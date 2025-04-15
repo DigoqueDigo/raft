@@ -6,12 +6,11 @@ import maelstrom.raft.state.State;
 
 public final class AppendEntries{
 
-
     public static void append(final int lPrefixLength, final int lCommitLength, final Log lSuffix, State state){
 
-        int lSuffixLength = lSuffix.size();
         int logLength = state.getLog().size();
-        int commitLength = state.getCommitLength();
+        final int lSuffixLength = lSuffix.size();
+        final int commitLength = state.getCommitLength();
 
         if (lSuffixLength > 0 && logLength > lPrefixLength){
 

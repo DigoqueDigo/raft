@@ -31,7 +31,6 @@ public final class VoteRequestHandler implements MessageHandler{
             final int cLastTerm = voteRequest.cLastTerm();
             final int cLogLength = voteRequest.cLogLength();
 
-            // o candidato tem um termo superior, atualizar o meu termo e role
             if (cTerm > state.getCurrentTerm()){
                 state.setCurrentTerm(cTerm);
                 state.setVotedFor(null);
@@ -48,7 +47,6 @@ public final class VoteRequestHandler implements MessageHandler{
                 lastTerm = state.getLog().get(logLength - 1).getTerm();
             }
 
-            // verificar se o log do candidato esta tao atualizado quanto o meu
             boolean termOK = cTerm == currentTerm;
             boolean votedForOk = votedFor == null || votedFor.equals(cId);
             boolean logOk = (cLastTerm > lastTerm) || (cLastTerm == lastTerm && cLogLength >= logLength);

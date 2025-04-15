@@ -19,7 +19,6 @@ public final class AppendEntries{
             int lEntryTerm = lSuffix.get(index - lPrefixLength).getTerm();
 
             if (entryTerm != lEntryTerm){
-                // TODO :: DEVIA VERIFICAR O MEU COMMIT INDEX
                 state.getLog().truncate(0, lPrefixLength);
                 logLength = state.getLog().size();
             }
@@ -33,16 +32,15 @@ public final class AppendEntries{
 
         if (lCommitLength > commitLength){
 
-            // TODO :: DEVIA VERIFICAR SE NAO ESTOU A DAR READ OVERFLOW NO MEU LOG
+            logLength = state.getLog().size();
+            final int nextCommitLength = Math.min(lCommitLength, logLength);
 
-            for (int index = commitLength; index < lCommitLength; index++){
+            for (int index = commitLength; index < nextCommitLength; index++){
                 LogEntry logEntry = state.getLog().get(index);
                 Deliver.deliver(state, logEntry.getMessage());
             }
 
-            // TODO :: A CONDICAO DO PAPER DO RAFT E MELHOR
-
-            state.setCommitLength(lCommitLength);
+            state.setCommitLength(nextCommitLength);
         }
     }
 }

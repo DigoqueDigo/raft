@@ -9,7 +9,7 @@ This project implements the Raft consensus protocol and is stress-tested using [
 
 ---
 
-## 📦 Dependencies
+## 📦 Requirements
 
 - **Maelstrom**
 - **Java 11** or higher

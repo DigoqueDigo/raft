@@ -27,7 +27,7 @@ chmod +x build.sh
 
 ---
 
-## 🚀 Run the Test
+## 🚀 Run Test
 
 Use Maelstrom to test the Raft implementation:
 
